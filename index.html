@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Maanbasis</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<canvas id="scene"></canvas>
+
+<div id="loader">
+  <div class="spin"></div>
+  <p>Maan wordt gevormd…</p>
+</div>
+
+<!-- ------------------------------------------------------------- bovenbalk -->
+<header id="hud">
+  <div class="res naam" title="Klik om je basis een naam te geven">
+    <span class="ico">☾</span>
+    <div>
+      <input id="v-name" maxlength="28" spellcheck="false" autocomplete="off" value="Basis Alfa">
+      <small>maanbasis</small>
+    </div>
+  </div>
+  <div class="res" title="Krediet — verdien je met vrachtlanceringen">
+    <span class="ico">◈</span>
+    <div><b id="v-credits">0</b><small>krediet</small></div>
+  </div>
+  <div class="res" title="Kolonisten / woonruimte">
+    <span class="ico">☺</span>
+    <div><b id="v-crew">0/0</b><small>kolonisten</small></div>
+  </div>
+
+  <div class="meter" title="Stroom uit zonnepanelen, opgeslagen in accu's">
+    <div class="lbl"><span>Stroom</span><span id="v-power">0</span></div>
+    <div class="bar"><i id="bar-power" class="fill pw"></i></div>
+    <div class="rate" id="r-power">±0/s</div>
+  </div>
+  <div class="meter" title="Voedsel uit de kweekkassen">
+    <div class="lbl"><span>Voedsel</span><span id="v-food">0</span></div>
+    <div class="bar"><i id="bar-food" class="fill fd"></i></div>
+    <div class="rate" id="r-food">±0/s</div>
+  </div>
+  <div class="meter" title="Brandstof in de tanks">
+    <div class="lbl"><span>Brandstof</span><span id="v-fuel">0</span></div>
+    <div class="bar"><i id="bar-fuel" class="fill fl"></i></div>
+    <div class="rate" id="r-fuel">±0/s</div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="toggles">
+    <button id="btn-follow" class="tgl on" title="Camera boven de basis houden">Volg basis</button>
+    <button id="btn-rotate" class="tgl on" title="Maan laten draaien (dag en nacht)">Draaiing</button>
+    <button id="btn-edge" class="tgl on" title="Beeld meeschuiven als de cursor de schermrand raakt">Randscroll</button>
+    <button id="btn-save" class="tgl" title="De basis als bestand bewaren">Opslaan</button>
+    <button id="btn-load" class="tgl" title="Een bewaard bestand openen (of sleep het op het venster)">Laden</button>
+    <button id="btn-help" class="tgl" title="Uitleg">?</button>
+  </div>
+  <input id="file-load" type="file" accept=".json,application/json" hidden>
+</header>
+
+<!-- ------------------------------------------------------------ zijpaneel -->
+<aside id="panel" hidden>
+  <button id="p-close" title="Sluiten">✕</button>
+  <h2 id="p-name">—</h2>
+  <p id="p-desc"></p>
+  <ul id="p-stats"></ul>
+  <div id="p-actions"></div>
+</aside>
+
+<!-- ------------------------------------------------------------- bouwbalk -->
+<footer id="buildbar">
+  <span class="hint">Bouwen:</span>
+  <div id="build-buttons"></div>
+  <span id="build-hint" class="hint dim">klik een module en daarna een vrije plek op de maan</span>
+</footer>
+
+<div id="toast"></div>
+
+<!-- ----------------------------------------------------------------- hulp -->
+<div id="help" hidden>
+  <div class="card">
+    <h2>Maanbasis</h2>
+    <p>Een kleine kolonie op een kale maan. Houd de stroom aan, de magen vol en de tanks
+       gevuld, en verdien krediet met vrachtlanceringen.</p>
+    <h3>Besturing</h3>
+    <ul>
+      <li><b>Slepen</b> — om het draaipunt heen draaien</li>
+      <li><b>Cursor tegen de schermrand</b> — het beeld schuift die kant op
+          (uit te zetten met <b>Randscroll</b> in de bovenbalk)</li>
+      <li><b>Muiswieltje indrukken en slepen</b> — draai om wat er onder de cursor
+          zit: een module, de raket of een plek op de maan</li>
+      <li><b>Scrollen / knijpen</b> — in- en uitzoomen</li>
+      <li><b>Klikken</b> — een module selecteren; in het paneel kun je de camera
+          er ook omheen laten draaien</li>
+      <li><b>Pijltjes</b> draaien, <b>+ / −</b> zoomen, <b>Esc</b> annuleert bouwen
+          en zet het draaipunt terug op de maan</li>
+      <li><b>Naam</b> — klik linksboven op de naam van je basis om hem te wijzigen</li>
+      <li><b>Opslaan / Laden</b> — je basis als bestand bewaren en terugzetten;
+          slepen van zo'n bestand op het venster werkt ook</li>
+    </ul>
+    <h3>Hoe het werkt</h3>
+    <ul>
+      <li><b>Zonnepanelen</b> leveren alleen stroom aan de dagzijde. De accu's moeten je door de nacht helpen.</li>
+      <li><b>Kweekkassen</b> maken voedsel, maar alleen mét stroom.</li>
+      <li><b>Brandstoftanks</b> winnen brandstof uit het regoliet — dat kost veel stroom.</li>
+      <li><b>Het lanceerplatform</b> stuurt een vracht weg zodra er 60 brandstof is. Dat levert krediet op.</li>
+      <li>Genoeg voedsel en woonruimte? Dan komen er vanzelf kolonisten bij — elk
+          poppetje dat je over de vlakte ziet lopen is er één.</li>
+    </ul>
+    <button id="help-close">Aan de slag</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  if (!window.THREE) {
+    document.getElementById('loader').innerHTML =
+      '<p><b>three.js kon niet geladen worden.</b><br>' +
+      'Dit spel haalt de 3D-bibliotheek van een CDN; zet even internet aan en herlaad.</p>';
+  }
+</script>
+<script src="js/utils.js"></script>
+<script src="js/moon.js"></script>
+<script src="js/buildings.js"></script>
+<script src="js/colonists.js"></script>
+<script src="js/world.js"></script>
+<script src="js/controls.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
