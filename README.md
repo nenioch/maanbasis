@@ -82,14 +82,20 @@ terug in de tarieven in de bovenbalk.
 
 | Bestand | Wat erin zit |
 | --- | --- |
-| `js/utils.js` | rekenhulpjes en gezaaide random |
-| `js/moon.js` | de bol: kraters, hoogtefunctie, de vlakke landingsvlakte en het tangentiële stelsel waarin de basis ligt |
-| `js/buildings.js` | de vijf modules als losse `THREE.Group`s, plus hun kosten en opbrengsten |
-| `js/colonists.js` | de poppetjes: model, looproutes en de wandelanimatie |
-| `js/world.js` | renderer, camera, licht, sterren, zon en de aarde aan de hemel |
-| `js/controls.js` | camera die om een draaipunt cirkelt; slepen, scrollen, knijpen, klikken |
-| `js/game.js` | bouwplekken, huishouding, HUD, selectie en de lancering |
-| `js/main.js` | alles aan elkaar knopen en de tekenlus |
+| `index.html` | de HUD, het hulpscherm en de scripttags |
+| `style.css` | de opmaak van alles wat over de 3D-scène heen ligt |
+| `utils.js` | rekenhulpjes en gezaaide random |
+| `moon.js` | de bol: kraters, hoogtefunctie, de vlakke landingsvlakte en het tangentiële stelsel waarin de basis ligt |
+| `buildings.js` | de vijf modules als losse `THREE.Group`s, plus hun kosten en opbrengsten |
+| `colonists.js` | de poppetjes: model, looproutes en de wandelanimatie |
+| `world.js` | renderer, camera, licht, sterren, zon en de aarde aan de hemel |
+| `controls.js` | camera die om een draaipunt cirkelt; slepen, scrollen, knijpen, klikken |
+| `game.js` | bouwplekken, huishouding, HUD, selectie, opslaan en de lancering |
+| `main.js` | alles aan elkaar knopen en de tekenlus |
+
+Alles staat plat naast elkaar; de bestanden verwijzen niet naar elkaar via
+paden, maar hangen zich allemaal aan de globale `MB`. Alleen de volgorde van de
+scripttags in `index.html` telt: `utils` eerst, `main` als laatste.
 
 De maan is één icosaëder waarvan elk hoekpunt langs zijn eigen richting naar
 buiten of naar binnen wordt geschoven (`hoogteBij`). Dezelfde functie bepaalt
